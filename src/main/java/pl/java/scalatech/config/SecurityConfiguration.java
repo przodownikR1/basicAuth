@@ -1,15 +1,28 @@
 package pl.java.scalatech.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-@Configuration
+import pl.java.scalatech.security.ApiAuthenticationEntryPoint;
+import pl.java.scalatech.security.ApiAuthenticationFailureHandler;
+import pl.java.scalatech.security.ApiAuthenticationSuccessHandler;
 
+@Configuration
+@ComponentScan(basePackages="pl.java.scalatech.security")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+
+    @Autowired
+    private ApiAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private ApiAuthenticationFailureHandler authenticationFailureHandler;
+    @Autowired
+    private ApiAuthenticationSuccessHandler authenticationSuccessHandler;
 
 
     @Override
@@ -27,9 +40,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requiresChannel().anyRequest().requiresSecure();
+        http.httpBasic().and().requiresChannel().anyRequest().requiresSecure();
+
+        http.authorizeRequests().antMatchers("/api/**").authenticated();
+        http.csrf().disable();
+        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        http.formLogin().successHandler(authenticationSuccessHandler);
+        http.formLogin().failureHandler(authenticationFailureHandler);
+
         // @formatter:off
-        http.httpBasic()
+        /*http.httpBasic()
         .and()
         .csrf().disable().headers().disable()
           .authorizeRequests().antMatchers("/login","/logout","secContext","principal","/health").permitAll()
@@ -47,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .antMatchers("/autoconfig/**").hasRole("ADMIN")
 
 
-          .anyRequest().permitAll();
+          .anyRequest().permitAll();*/
           // @formatter:on
     }
 
