@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 import pl.java.scalatech.security.ApiAuthenticationEntryPoint;
 import pl.java.scalatech.security.ApiAuthenticationFailureHandler;
@@ -40,7 +41,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().and().requiresChannel().anyRequest().requiresSecure();
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        http.httpBasic().realmName("basicAuth").and().requiresChannel().anyRequest().requiresSecure();
 
         http.authorizeRequests().antMatchers("/api/**").authenticated();
         http.csrf().disable();
