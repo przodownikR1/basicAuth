@@ -1,0 +1,66 @@
+@Entity
+@Table(name = "user_roles", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "user_username", name = "Unique_user_username")
+})
+
+public class Role implements Serializable
+{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, name = "user_role_id")
+    private long id;
+
+    @Column(nullable = false, unique = false, name = "role", length = 45)
+    @NotBlank(message = "{blank.message}")
+    private String role;
+
+    @Valid
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = User.class)
+    @JoinColumn(name = "user_username")
+    private User user;
+    
+    }
+    
+    @Entity
+@Table(name = "users")
+public class User implements Serializable
+{
+
+    @NotBlank
+    private String fullName;
+
+    @Id
+    @Column(name = "username", length = 45, nullable = false)
+    @NotBlank(message = "{blank.message}")
+    private String username;
+
+    @NotBlank
+    @Column(name = "password", length = 255, nullable = false)
+    private String password;
+
+    @Transient
+    private String confirmPassword;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = true;
+    
+    }
+    
+    
+    
+INSERT INTO `users` (`username`, `enabled`, `fullName`, `password`) VALUES
+('admin', 1, 'slawek', 'dsfsdfsdfsdfsdfsdfsdf_encyrpy'),
+('przodownik', 1, 'przodownil', 'sdfsdfsdfdfgdfg_encrypt'),
+('vava', 1, 'vava', 'dfgdfg_encrypt');
+
+--
+-- Contenu de la table `user_roles`
+--
+
+INSERT INTO `user_roles` (`user_role_id`, `role`, `user_username`) VALUES
+(1, 'ROLE_ADMIN', 'admin'),
+(2, 'ROLE_USER', 'przodownik'),
+(3, 'ROLE_USER', 'vava');
+
+    
