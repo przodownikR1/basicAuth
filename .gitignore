@@ -6,7 +6,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -70,7 +69,6 @@ local.properties
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -84,5 +82,3 @@ gc.log
 app.log
 gc.log.0.current
 mailTask.log
-gradle
-gradlew
